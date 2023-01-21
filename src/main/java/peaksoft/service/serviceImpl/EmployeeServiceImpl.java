@@ -33,8 +33,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public void updateEmployee(Long id, Employee employee) {
-        employeeDao.updateEmployee(id,employee);
+    public void updateEmployee(Long employeeId, Employee employee) {
+        employeeDao.updateEmployee(employeeId,employee);
     }
 
     @Override

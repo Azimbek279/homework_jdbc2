@@ -9,7 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JobDaoImpl implements JobDao {
-
+    public static final String GREEN = "\u001b[32m";
+    public static final String RESET = "\u001b[0m";
     Connection connection = DBConfig.getConnection();
 
     public void createJobTable() {
@@ -22,9 +23,9 @@ public class JobDaoImpl implements JobDao {
 
         try(Statement statement = connection.createStatement()){
             statement.executeUpdate(createJobTable);
-            System.out.println("<<<Create Table Job!>>>");
+            System.out.println(GREEN+"<<<Create Table Job!>>>"+GREEN);
         }catch (SQLException e){
-            System.out.println("<<<Doesn't work method Create Table Job!>>>");
+            System.err.println("<<<Doesn't work method Create Table Job!>>>");
         }
     }
 
@@ -37,9 +38,9 @@ public class JobDaoImpl implements JobDao {
             ps.setString(3,job.getDescription());
             ps.setInt(4,job.getExperience());
             ps.executeUpdate();
-            System.out.println("<<<add Job!>>>");
+            System.out.println(GREEN+"<<<add Job!>>>"+GREEN);
         }catch (SQLException e){
-            System.out.println("<<<Doesn't work method add Job!>>>");
+            System.err.println("<<<Doesn't work method add Job!>>>");
         }
     }
 
@@ -52,24 +53,25 @@ public class JobDaoImpl implements JobDao {
 
             ResultSet resultSet = ps.getResultSet();
             while(resultSet.next()){
-                job.setId(resultSet.getLong("jobId"));
+                job.setId(resultSet.getLong(1));
                 job.setPosition(resultSet.getString(2));
                 job.setProfession(resultSet.getString(3));
                 job.setDescription(resultSet.getString(4));
                 job.setExperience(resultSet.getInt(5));
-                System.out.println("<<<Get By Id Job!>>>");
+                System.out.println(GREEN+"<<<Get By Id Job!>>>"+GREEN);
                 return job;
             }
         }catch (SQLException e){
-            System.out.println("<<<Doesn't work method add Job!>>>");
+            System.err.println("<<<Doesn't work method Get-Job-By-ID!>>>");
         }
+
         return job;
     }
 
     public List<Job> sortByExperience(String ascOrDesc) {
         String asc = "select * from Jobs order by experience";
         String desc = "select * from Jobs order by experience desc";
-        ArrayList<Job>list = new ArrayList<>();
+        List<Job>list = new ArrayList<>();
         switch (ascOrDesc){
             case "asc":
                 try(Statement statement = connection.createStatement()){
@@ -81,11 +83,11 @@ public class JobDaoImpl implements JobDao {
                         job.setDescription(resultSet.getString("description"));
                         job.setExperience(resultSet.getInt("experience"));
                         list.add(job);
-                        System.out.println("<<<Sort By Experience {ASC}!>>>");
+
                     }
 
                 }catch (SQLException e){
-                    System.out.println("<<<Doesn't work method sort-By-Experience!>>>");
+                    System.err.println("<<<Doesn't work method sort-By-Experience!>>>");
                 }
                 break;
             case "desc":
@@ -98,21 +100,25 @@ public class JobDaoImpl implements JobDao {
                         job.setDescription(resultSet.getString("description"));
                         job.setExperience(resultSet.getInt("experience"));
                         list.add(job);
-                        System.out.println("<<<Sort By Experience {DESC}!>>>");
                     }
 
                 }catch (SQLException e){
-                    System.out.println("<<<Doesn't work method sort-By-Experience!>>>");
+                    System.err.println("<<<Doesn't work method sort-By-Experience!>>>");
                 }
                 break;
         }
 
-
+        if (ascOrDesc == "asc") {
+            System.out.println(GREEN+"<<<Sort By Experience {ASC}!>>>"+RESET);
+        }else {
+            System.out.println(GREEN+"<<<Sort By Experience {DESC}!>>>"+RESET);
+        }
+        System.out.println(" ");
         return list;
     }
 
     public Job getJobByEmployeeId(Long employeeId) {
-        String getJobByEmployeeId = "select * from Jobs join Employees e on e.id = Jobs.id " +
+        String getJobByEmployeeId = "select * from Jobs j join Employees e on e.id = j.id" +
                 "where e.id = ?";
         Job job = new Job();
         try(PreparedStatement ps = connection.prepareStatement(getJobByEmployeeId)){
@@ -120,28 +126,28 @@ public class JobDaoImpl implements JobDao {
             ps.execute();
             ResultSet resultSet = ps.getResultSet();
             while(resultSet.next()){
-                job.setPosition(resultSet.getString("position"));
-                job.setProfession(resultSet.getString("profession"));
-                job.setDescription(resultSet.getString("description"));
-                job.setExperience(resultSet.getInt("experience"));
-                System.out.println("<<<Get-Job-By-EmployeeId>>>");
+                job.setId(resultSet.getLong(1));
+                job.setPosition(resultSet.getString(2));
+                job.setProfession(resultSet.getString(3));
+                job.setDescription(resultSet.getString(4));
+                job.setExperience(resultSet.getInt(5));
+                System.out.println(GREEN+"<<<Get-Job-By-EmployeeId>>>"+GREEN);
                 return job;
             }
         }catch (SQLException e){
-            System.out.println("<<<Doesn't work method Get-JobBy-Employee-Id!>>>");
+            System.err.println("<<<Doesn't work method Get-Job-By-Employee-Id!>>>");
         }
         return job;
     }
 
     public void deleteDescriptionColumn() {
-        String deleteColumn = "alter table Jobs" +
-                "drop column description";
+        String deleteColumn = "ALTER TABLE Jobs drop column description";
 
         try(Statement statement = connection.createStatement()){
             statement.executeUpdate(deleteColumn);
-            System.out.println("<<<Delete Column Description!>>>");
+            System.out.println(GREEN+"<<<Delete Column Description!>>>"+GREEN);
         }catch (SQLException e){
-            System.out.println("<<<Doesn't work method Delete Description Column!>>>");
+            System.err.println("<<<Doesn't work method Delete Description Column!>>>");
         }
     }
 }

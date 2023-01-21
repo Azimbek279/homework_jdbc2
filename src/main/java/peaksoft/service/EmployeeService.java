@@ -11,7 +11,7 @@ public interface EmployeeService {
     void addEmployee(Employee employee);
     void dropTable();
     void cleanTable();
-    void updateEmployee(Long id,Employee employee);
+    void updateEmployee(Long employeeId,Employee employee);
     List<Employee> getAllEmployees();
     Employee findByEmail(String email);
     Map<Employee, Job> getEmployeeById(Long employeeId);
