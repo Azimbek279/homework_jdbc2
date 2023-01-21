@@ -143,7 +143,8 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
 
     public Map<Employee, Job> getEmployeeById(Long employeeId) {
-        String getEmployeeById = "select * from employees join jobs j on employees.job_id = j.id  where employees.id = ?;";
+        String getEmployeeById = "select * from Employees full join Jobs j " +
+                "on employees.job_id = j.id  where employees.id = ?;";
         Map<Employee, Job> list = new LinkedHashMap<>();
 
         try (PreparedStatement ps = connection.prepareStatement(getEmployeeById)) {
@@ -163,14 +164,14 @@ public class EmployeeDaoImpl implements EmployeeDao {
                 job.setDescription(resultSet.getString("description"));
                 job.setExperience(resultSet.getInt("experience"));
 
-                list.put(employee, job);
-                System.out.println(GREEN + "<<<Get Employee By Id!>>>");
+                list.put(employee,job);
+                System.out.println(GREEN +"<<<Get Employee By Id!>>>"+RESET);
             }
             resultSet.close();
         } catch (SQLException e) {
             System.err.println("<<<Doesn't work method Get Employee By Id>>>");
-
         }
+        System.out.println(" ");
         return list;
     }
 
